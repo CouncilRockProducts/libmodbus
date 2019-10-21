@@ -67,10 +67,10 @@ int main(void)
     int exception;
     int slave;
 
-    ctx = modbus_new_tcp("127.0.0.1", 1502);
+    ctx = modbus_new_tcp("0.0.0.0", 10502);
 
     //ctx_rtu = modbus_new_rtu("/dev/ttyUSB1", 115200, 'N', 8, 1);
-    ctx_rtu = modbus_new_rtu("/dev/ttyS0", 9600, 'N', 8, 1);
+    ctx_rtu = modbus_new_rtu("/dev/ttyXRUSB0", 38400, 'E', 8, 1);
 
     if (modbus_connect(ctx_rtu) == -1) {
         fprintf(stderr, "Connection failed: %s\n", modbus_strerror(errno));
@@ -78,6 +78,9 @@ int main(void)
         modbus_free(ctx);
         return -1;
     }
+    
+    modbus_rtu_set_serial_mode(ctx_rtu, MODBUS_RTU_RS485);
+	modbus_rtu_set_rts(ctx_rtu, MODBUS_RTU_RTS_DOWN);
 
     server_socket = modbus_tcp_listen(ctx, NB_CONNECTION);
 
